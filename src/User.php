@@ -5,18 +5,15 @@ namespace App;
 abstract class User
 {
     protected ?int $id;
-    protected string $firstName;
-    protected string $lastName;
-    protected int $age;
-    protected bool $isBan;
 
-    public function __construct(?int $id, string $firstName, string $lastName, int $age, bool $isBan)
-    {
+    public function __construct(
+        ?int $id,
+        protected string $firstName,
+        protected string $lastName,
+        protected int $age,
+        protected bool $isBan
+    ){
         isset($id) ? $this->id = $id : $this->id = null;
-        $this->firstName = $firstName;
-        $this->lastName = $lastName;
-        $this->age = $age;
-        $this->isBan = $isBan;
     }
 
 
