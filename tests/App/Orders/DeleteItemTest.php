@@ -1,6 +1,6 @@
 <?php
 
-namespace oldTests\Orders;
+namespace App\Orders;
 
 use App\Orders\Item\DeleteItem;
 use PHPUnit\Framework\TestCase;

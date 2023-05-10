@@ -1,6 +1,6 @@
 <?php
 
-namespace oldTests\Orders;
+namespace App\Orders;
 
 use App\Orders\Item\AddItem;
 use PHPUnit\Framework\TestCase;
