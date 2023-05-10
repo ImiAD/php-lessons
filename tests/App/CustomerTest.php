@@ -24,7 +24,7 @@ class CustomerTest extends TestCase
         $this->assertEquals('Stepan', $customer->getFirstName());
         $this->assertEquals('Stepancev', $customer->getLastName());
         $this->assertEquals(48, $customer->getAge());
-        $this->assertEquals(false, $customer->getIsBan());
+        $this->assertFalse($customer->getIsBan());
 
         $customer->setId(10);
         $this->assertEquals(10, $customer->getId());

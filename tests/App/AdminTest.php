@@ -24,8 +24,8 @@ class AdminTest extends TestCase
         $this->assertEquals('IvanAdmin', $admin->getFirstName());
         $this->assertEquals('IvanovAdmin', $admin->getLastName());
         $this->assertEquals(26, $admin->getAge());
-        $this->assertEquals(false, $admin->getIsBan());
-        $this->assertEquals(true, $admin->getIsAdmin());
+        $this->assertFalse($admin->getIsBan());
+        $this->assertTrue($admin->getIsAdmin());
 
         $admin->setId(1);
         $admin->setFirstName('Petr');
@@ -38,7 +38,7 @@ class AdminTest extends TestCase
         $this->assertEquals('Petr', $admin->getFirstName());
         $this->assertEquals('Petrov', $admin->getLastName());
         $this->assertEquals(34, $admin->getAge());
-        $this->assertEquals(true, $admin->getIsBan());
-        $this->assertEquals(false, $admin->getIsAdmin());
+        $this->assertTrue($admin->getIsBan());
+        $this->assertFalse($admin->getIsAdmin());
     }
 }
