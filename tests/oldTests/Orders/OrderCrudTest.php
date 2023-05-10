@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Orders;
+namespace oldTests\Orders;
 
 use App\Orders\Order\OrderCrud;
 use PHPUnit\Framework\TestCase;

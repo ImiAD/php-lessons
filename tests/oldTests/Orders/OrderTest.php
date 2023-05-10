@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Orders;
+namespace oldTests\Orders;
 
 use App\Orders\Order\Calculator;
 use App\Orders\Order\Order;

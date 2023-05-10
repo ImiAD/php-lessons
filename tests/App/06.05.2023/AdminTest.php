@@ -8,15 +8,19 @@ class AdminTest extends TestCase
 {
     public function testObjectAdmin(): void
     {
-        $idAdmin = null;
-        $firstNameAdmin = 'FirstAdmin';
-        $lastNameAdmin = 'LastAdmin';
-        $ageAdmin = 25;
-        $isBan = false;
-        $isAdmin = true;
+        $data = [
+            'id' => 0,
+            'firstName' => 'FirstAdmin',
+            'lastName' => 'LastAdmin',
+            'age' => 25,
+            'isBan' => false,
+            'isAdmin' => true,
+        ];
 
-        $admin = new Admin($idAdmin, $firstNameAdmin, $lastNameAdmin, $ageAdmin, $isBan, $isAdmin);
-        $this->assertEquals(null, $admin->getId());
+        $admin = Admin::create($data);
+
+        $this->assertInstanceOf(User::class, $admin);
+        $this->assertInstanceOf(User::class, $admin);
         $this->assertEquals('FirstAdmin', $admin->getFirstName());
         $this->assertEquals('LastAdmin', $admin->getLastName());
         $this->assertEquals(25, $admin->getAge());
