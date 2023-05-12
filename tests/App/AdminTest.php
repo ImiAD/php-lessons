@@ -7,12 +7,13 @@ use PHPUnit\Framework\TestCase;
 
 class AdminTest extends TestCase
 {
-    public function testCheckCreateAdmin(): void
+    public function testCanCreateAdmin(): void
     {
         $data = [
-            'firstName' => 'IvanAdmin',
-            'lastName' => 'IvanovAdmin',
-            'age' => 26,
+            'id' => '666',
+            'firstName' => 'Ivan',
+            'lastName' => 'Ivanov',
+            'age' => '26',
             'isBan' => false,
             'isAdmin' => true,
         ];
@@ -21,10 +22,18 @@ class AdminTest extends TestCase
 
         $this->assertInstanceOf(Admin::class, $admin);
         $this->assertInstanceOf(User::class, $admin);
-        $this->assertEquals('IvanAdmin', $admin->getFirstName());
-        $this->assertEquals('IvanovAdmin', $admin->getLastName());
-        $this->assertEquals(26, $admin->getAge());
+
+        $this->assertIsInt($admin->getId());
+        $this->assertEquals($data['id'], $admin->getId());
+        $this->assertIsString($admin->getFirstName());
+        $this->assertEquals($data['firstName'], $admin->getFirstName());
+        $this->assertIsString($admin->getLastName());
+        $this->assertEquals($data['lastName'], $admin->getLastName());
+        $this->assertIsInt($admin->getAge());
+        $this->assertEquals($data['age'], $admin->getAge());
+        $this->assertIsBool($admin->getIsBan());
         $this->assertFalse($admin->getIsBan());
+        $this->assertisBool($admin->getIsAdmin());
         $this->assertTrue($admin->getIsAdmin());
 
         $admin->setId(1);
@@ -34,11 +43,17 @@ class AdminTest extends TestCase
         $admin->setIsBan(true);
         $admin->setIsAdmin(false);
 
+        $this->assertIsInt($admin->getId());
         $this->assertEquals(1, $admin->getId());
+        $this->assertIsString($admin->getFirstName());
         $this->assertEquals('Petr', $admin->getFirstName());
+        $this->assertIsString($admin->getLastName());
         $this->assertEquals('Petrov', $admin->getLastName());
+        $this->assertIsInt($admin->getAge());
         $this->assertEquals(34, $admin->getAge());
+        $this->assertIsBool($admin->getIsBan());
         $this->assertTrue($admin->getIsBan());
+        $this->assertisBool($admin->getIsAdmin());
         $this->assertFalse($admin->getIsAdmin());
     }
 }

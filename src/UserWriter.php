@@ -5,35 +5,15 @@ namespace App;
 
 class UserWriter
 {
-    private string $about;
-
-    //Какой тип должен возвращать метод?
-    public function write(User $value): string
+    public static function write(User $item): string
     {
-        switch($value) {
-            case $value instanceof Admin:
-                return $this->writeAdmin($value);
-            case $value instanceof Customer:
-                return $this->writeCustomer($value);
-        }
-    }
+        $str = !empty($item->getId()) ? "id: {$item->getId()}\n" : '';
+        $str .= 'Имя: ' . $item->getFirstName() . "\n";
+        $str .= 'Фамилия: ' . $item->getLastName() . "\n";
+        $str .= 'Возраст: ' . $item->getAge() . "\n";
+        $str .= 'Доступ: ' . $item->getStatus($item);
+        $str .= ($item instanceof Admin) ? "\n" . 'Права: ' . $item->getRole($item) : '';
 
-    private function writeAdmin(User $value): string
-    {
-        $this->about = $this->writeCustomer($value) . "\n"
-            . 'Права: ' . ConvertBoolToString::convertIsAdmin($value);
-
-        return $this->about;
-    }
-
-    private function writeCustomer(User $value): string
-    {
-        $this->about = 'id: ' . $value->getId() . "\n"
-            . 'Имя: ' . $value->getFirstName() . "\n"
-            . 'Фамилия: ' . $value->getLastName() . "\n"
-            . 'Возраст: ' . $value->getAge() . "\n"
-            . 'Доступ: ' . ConvertBoolToString::convertIsBan($value);
-
-        return $this->about;
+        return $str;
     }
 }

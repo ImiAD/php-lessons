@@ -1,11 +1,11 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App;
 
 abstract class User
 {
-    private int $id;
+    private ?int $id = null;
     private string $firstName;
     private string $lastName;
     private int $age;
@@ -13,9 +13,9 @@ abstract class User
 
     private function __construct(array $data)
     {
-        $this->firstName = $data['firstName'];
-        $this->lastName = $data['lastName'];
-        $this->age = $data['age'];
+        $this->firstName = (string)$data['firstName'];
+        $this->lastName = (string)$data['lastName'];
+        $this->age = (int)$data['age'];
         $this->isBan = $data['isBan'];
     }
 
@@ -24,9 +24,12 @@ abstract class User
         $item = new static($data);
 
         if (!empty($data['id'])) {
-            $item->setId($data['id']);
+            $item->setId((int)$data['id']);
         }
 
+        //Если использовать empty и передавать $data['isAdmin'] => false (Пользователь),
+        //то тест testCanCreateAdminWriterObject не будет пройден.
+        //Если заменить empty на isset и пробросить $data['isAdmin'] => false все тесты выполняются!
         if (!empty($data['isAdmin']) && ($item instanceof Admin)) {
             $item->setIsAdmin($data['isAdmin']);
         }
@@ -39,7 +42,7 @@ abstract class User
         $this->id = $value;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -82,5 +85,15 @@ abstract class User
     public function getIsBan(): bool
     {
         return $this->isBan;
+    }
+
+    public function getStatus(User $item): string
+    {
+        return $item->getIsBan() ? 'Заблокирован' : 'Не заблокирован';
+    }
+
+    public function getRole(Admin $item): string
+    {
+        return $item->getIsAdmin() ? 'Администратор' : 'Пользователь';
     }
 }
