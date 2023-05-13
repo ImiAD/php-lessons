@@ -5,7 +5,7 @@ namespace App;
 
 class Admin extends User
 {
-    private bool $isAdmin;
+    private bool $isAdmin = false;
 
     public function setIsAdmin(bool $value): void
     {
