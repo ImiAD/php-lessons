@@ -5,17 +5,20 @@ namespace App;
 
 abstract class User
 {
+    protected const TABLE_NAME = '';
+
     private ?int $id = null;
     private string $firstName;
     private string $lastName;
-    private int $age;
+    private string $birthday;
+    private string $createAt;
+    private string $updateAt;
     private bool $isBan;
 
     private function __construct(array $data)
     {
-        $this->firstName = (string)$data['firstName'];
-        $this->lastName = (string)$data['lastName'];
-        $this->age = (int)$data['age'];
+        $this->firstName = $data['firstName'];
+        $this->lastName = $data['lastName'];
         $this->isBan = $data['isBan'];
     }
 
@@ -27,19 +30,68 @@ abstract class User
             $item->setId((int)$data['id']);
         }
 
-        //Если использовать empty и передавать $data['isAdmin'] => false (Пользователь),
-        //то тест testCanCreateAdminWriterObject не будет пройден.
-        //Если заменить empty на isset и пробросить $data['isAdmin'] => false все тесты выполняются!
-        if (!empty($data['isAdmin']) && ($item instanceof Admin)) {
+        //Как этот код из этих 3 одинкаковых if объеденить в 1 условие/цикл?
+        if (!empty($data['birthday'])) {
+            $str = explode('-', $data['birthday']);
+            $result = $str[2] . '-' . $str[1] . '-' . $str[0];
+            $item->setBirthday($result);
+        }
+
+        if (!empty($data['createAt'])) {
+            $str = explode('-', $data['createAt']);
+            $result = $str[2] . '-' . $str[1] . '-' . $str[0];
+            $item->setCreateAt($result);
+        }
+
+        if (!empty($data['updateAt'])) {
+            $str = explode('-', $data['updateAt']);
+            $result = $str[2] . '-' . $str[1] . '-' . $str[0];
+            $item->setUpdateAt($result);
+        }
+
+
+        if ((!empty($data['isAdmin'])) && $item instanceof Admin) {
             $item->setIsAdmin($data['isAdmin']);
         }
 
         return $item;
     }
 
-    public function setId(int $value): void
+    public function getAll(User $item, array $data): string
     {
-        $this->id = $value;
+        $orderBy = $data['DESC'] ? 'ORDER BY DESC' : 'ORDER BY ASC';
+
+        return "SELECT * FROM {$item->getTableName()} {$data['firstName']} {$orderBy}";
+    }
+
+    // Не получается прямо в строку запроса поместить тернарный оператор сравнения с null.
+    // Про тернарный прочитал, что в строку его нет возможности поместить. Только с конкатенацией, но у меня тогда
+    // метод возвращал только SELECT и больше ничего. <- при использовании конкатенации.
+    public function getOne(User $item, array $data): string
+    {
+        return "SELECT {$data['id']} FROM {$item->getTableName()}";
+    }
+
+    public function insert(User $item, array $data): string
+    {
+        return "INSERT INTO {$item->getTableName()} VALUES id = {$data['id']}, first_name = {$data['firstName']}, last_name = {$data['lastName']}";
+    }
+
+    public function update(User $item, array $data): string
+    {
+        return "UPDATE {$item->getTableName()} SET first_name = {$data['firstName']} WHERE id = {$data['id']}";
+    }
+
+    public function delete(User $item, ?int $id = null): string
+    {
+        $str = $id ? " WHERE id = {$id}" : '';
+
+        return "DELETE {$item->getTableName()}{$str}";
+    }
+
+    public function getTableName(): string
+    {
+        return static::TABLE_NAME;
     }
 
     public function getId(): ?int
@@ -47,19 +99,9 @@ abstract class User
         return $this->id;
     }
 
-    public function setFirstName(string $value): void
-    {
-        $this->firstName = $value;
-    }
-
     public function getFirstName(): string
     {
         return $this->firstName;
-    }
-
-    public function setLastName(string $value): void
-    {
-        $this->lastName = $value;
     }
 
     public function getLastName(): string
@@ -67,14 +109,44 @@ abstract class User
         return $this->lastName;
     }
 
-    public function setAge(int $value): void
+    public function getBirthday(): string
     {
-        $this->age = $value;
+        return $this->birthday;
     }
 
-    public function getAge(): int
+    public function getIsBan(): bool
     {
-        return $this->age;
+        return $this->isBan;
+    }
+
+    public function getCreateAt(): string
+    {
+        return $this->createAt;
+    }
+
+    public function getUpdateAt(): string
+    {
+        return $this->updateAt;
+    }
+
+    public function setId(int $value): void
+    {
+        $this->id = $value;
+    }
+
+    public function setFirstName(string $value): void
+    {
+        $this->firstName = $value;
+    }
+
+    public function setLastName(string $value): void
+    {
+        $this->lastName = $value;
+    }
+
+    public function setBirthday(string $value): void
+    {
+        $this->birthday = $value;
     }
 
     public function setIsBan(bool $value): void
@@ -82,9 +154,14 @@ abstract class User
         $this->isBan = $value;
     }
 
-    public function getIsBan(): bool
+    public function setCreateAt(string $value): void
     {
-        return $this->isBan;
+        $this->createAt = $value;
+    }
+
+    public function setUpdateAt(string $value): void
+    {
+        $this->updateAt = $value;
     }
 
     public function getStatus(User $item): string

@@ -1,19 +1,20 @@
 <?php
 declare(strict_types=1);
-
 namespace App;
 
 class Admin extends User
 {
-    private bool $isAdmin = false;
+    protected const TABLE_NAME = 'admins';
 
-    public function setIsAdmin(bool $value): void
-    {
-        $this->isAdmin = $value;
-    }
+    private bool $isAdmin = false;
 
     public function getIsAdmin(): bool
     {
         return $this->isAdmin;
+    }
+
+    public function setIsAdmin(bool $value): void
+    {
+        $this->isAdmin = $value;
     }
 }

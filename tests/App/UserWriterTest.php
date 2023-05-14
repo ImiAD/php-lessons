@@ -7,60 +7,88 @@ use PHPUnit\Framework\TestCase;
 
 class UserWriterTest extends TestCase
 {
-    public function testCanCreateAdminWriterObject(): void
+    public function testCanCreateAdminWriter(): void
     {
         $data = [
-            'id' => '1',
-            'firstName' => 'Ivan',
-            'lastName' => 'Ivanov',
-            'age' => '26',
+            'firstName' => 'Grinnay',
+            'lastName' => 'Grafinov',
+            'birthday' => '05-05-1900',
+            'createAt' => '23-09-2020',
+            'updateAt' => '12-09-2032',
             'isBan' => true,
+            'isAdmin' => false,
+        ];
+
+        $dataTest = "Имя: Grinnay\nФамилия: Grafinov\nДата рождения: 05-05-1900\nДоступ: Заблокирован\nДата создания записи: 23-09-2020\nДата изменения записи: 12-09-2032\nПрава: Пользователь";
+
+        $item = Admin::create($data);
+        $adminWriter = UserWriter::write($item);
+
+        $this->assertIsString($adminWriter);
+
+        $this->assertEquals($dataTest, $adminWriter);
+
+
+        $data = [
+            'id' => 111,
+            'firstName' => 'Pilot',
+            'lastName' => 'Barinov',
+            'birthday' => '15-02-1987',
+            'createAt' => '01-02-2023',
+            'updateAt' => '03-03-2023',
+            'isBan' => false,
             'isAdmin' => true,
         ];
 
-        $this->assertEquals(
-            "id: 1" . "\n"
-            . "Имя: Ivan" . "\n"
-            . "Фамилия: Ivanov" . "\n"
-            . "Возраст: 26" . "\n"
-            . "Доступ: Заблокирован" . "\n"
-            . "Права: Администратор",
-            UserWriter::write(Admin::create($data))
-        );
+        $dataTest = "id: 111 \nИмя: Pilot\nФамилия: Barinov\nДата рождения: 15-02-1987\nДоступ: Не заблокирован\nДата создания записи: 01-02-2023\nДата изменения записи: 03-03-2023\nПрава: Администратор";
 
-       $data = [
-            'firstName' => 'Ivan',
-            'lastName' => 'Ivanov',
-            'age' => '26',
-            'isBan' => true,
-            'isAdmin' => true,
-        ];
+        $item = Admin::create($data);
+        $writer = UserWriter::write($item);
 
-       $this->assertEquals("Имя: Ivan" . "\n"
-           . "Фамилия: Ivanov" . "\n"
-           . "Возраст: 26" . "\n"
-           . "Доступ: Заблокирован" . "\n"
-           . "Права: Администратор",
-            UserWriter::write(Admin::create($data))
-       );
+        $this->assertIsString($writer);
+
+        $this->assertEquals($dataTest, $writer);
     }
 
-    public function testCanCreateCustomerWriterObject(): void
+    public function testCanCreateCustomer(): void
     {
         $data = [
-            'id' => '2',
-            'firstName' => 'Petr',
-            'lastName' => 'Petrov',
-            'age' => '47',
-            'isBan' => true,
+            'firstName' => 'Dumbo',
+            'lastName' => 'Pitonov',
+            'birthday' => '25-03-1754',
+            'createAt' => '21-10-1918',
+            'updateAt' => '14-11-1932',
+            'isBan' => false,
+            'isAdmin' => false,
         ];
 
-        $this->assertEquals(
-            "id: 2" . "\n"
-            . "Имя: Petr" . "\n"
-            . "Фамилия: Petrov" . "\n"
-            . "Возраст: 47" . "\n"
-            . "Доступ: Заблокирован",
-            UserWriter::write(Customer::create($data)));
+        $dataTest = "Имя: Dumbo\nФамилия: Pitonov\nДата рождения: 25-03-1754\nДоступ: Не заблокирован\nДата создания записи: 21-10-1918\nДата изменения записи: 14-11-1932";
+
+        $item = Customer::create($data);
+        $writer = UserWriter::write($item);
+
+        $this->assertIsString($writer);
+
+        $this->assertEquals($dataTest, $writer);
+
+        $data = [
+            'id' => 454,
+            'firstName' => 'Tt',
+            'lastName' => 'Ralvizo',
+            'birthday' => '29-04-1876',
+            'createAt' => '19-12-1912',
+            'updateAt' => '10-09-2000',
+            'isBan' => true,
+            'isAdmin' => false,
+        ];
+
+        $dataTest = "id: 454 \nИмя: Tt\nФамилия: Ralvizo\nДата рождения: 29-04-1876\nДоступ: Заблокирован\nДата создания записи: 19-12-1912\nДата изменения записи: 10-09-2000";
+
+        $item = Customer::create($data);
+        $writer = UserWriter::write($item);
+
+        $this->assertIsString($writer);
+
+        $this->assertEquals($dataTest, $writer);
     }
 }
