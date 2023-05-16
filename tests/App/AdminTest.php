@@ -19,42 +19,6 @@ class AdminTest extends TestCase
             'isAdmin' => true,
         ];
 
-        $test = [
-            'birthday' => '2000-12-12',
-            'createAt' => '2023-01-30',
-            'updateAt' => '2023-02-02',
-            'status' => 'Не заблокирован',
-            'role' => 'Администратор',
-            'tableName' => 'admins',
-//            'selectAllStr' => 'SELECT * FROM admins first_name ORDER BY DESC',
-            'selectAllStr' => 'SELECT * FROM admins first_name ORDER BY ASC',
-            'selectOneStr' => 'SELECT 2 FROM admins',
-            'insertStr' => 'INSERT INTO admins VALUES id = 2, first_name = Mishanya, last_name = XXX',
-            'updateStr' => 'UPDATE admins SET first_name = Foma WHERE id = 2',
-            'deleteStr' => 'DELETE admins WHERE id = 22',
-//            'DESC' => true,
-            'DESC' => false,
-            'firstName' => 'first_name',
-        ];
-
-        $selectOne = [
-            'id' => '2',
-        ];
-
-        $insert = [
-            'id' => '2',
-            'firstName' => 'Mishanya',
-            'lastName' => 'XXX',
-            'birthday' => '22-08-1752',
-        ];
-
-        $update = [
-            'id' => '2',
-            'firstName' => 'Foma',
-        ];
-
-        $delete = 22;
-
         $item = Admin::create($data);
 
         $this->assertInstanceOf(User::class, $item);
@@ -69,10 +33,50 @@ class AdminTest extends TestCase
         $this->assertIsString($item->getUpdateAt());
         $this->assertIsString($item->getTableName());
 
+        $test = [
+            'firstName' => 'Ivan',
+            'lastName' => 'Ivanov',
+            'birthday' => '2000-12-12',
+            'createAt' => '2023-01-30',
+            'updateAt' => '2023-02-02',
+            'status' => 'Не заблокирован',
+            'role' => 'Администратор',
+            'tableName' => 'admins',
+//            'selectAllStr' => 'SELECT * FROM admins ORDER BY first_name DESC',
+            'selectAllStr' => 'SELECT * FROM admins ORDER BY first_name ASC',
+            'selectOneStr' => 'SELECT * FROM admins WHERE id = 2',
+            'insertStr' => 'INSERT INTO admins(first_name, last_name, birthday) VALUES Mishanya, XXX, 1752-08-22',
+            'updateStr' => 'UPDATE admins SET first_name = Foma WHERE id = 12',
+            'deleteStr' => 'DELETE admins WHERE id = 22 LIMIT 1',
+//            'DESC' => true,
+            'DESC' => false,
+            'first_name' => 'first_name',
+        ];
+
+        $selectOne = [
+            'id' => '2',
+        ];
+
         $this->assertIsString($item->getAll($item, $test));
         $this->assertIsString($item->getOne($item, $selectOne));
+
+        $insert = [
+            'firstName' => 'Mishanya',
+            'lastName' => 'XXX',
+            'birthday' => '1752-08-22',
+        ];
+
         $this->assertIsString($item->insert($item, $insert));
+
+        $update = [
+            'id' => 12,
+            'firstName' => 'Foma',
+        ];
+
         $this->assertIsString($item->update($item, $update));
+
+        $delete = 22;
+
         $this->assertIsString($item->delete($item, $delete));
 
         $this->assertIsBool($item->getIsBan());
@@ -80,9 +84,8 @@ class AdminTest extends TestCase
         $this->assertIsBool($item->getIsAdmin());
         $this->assertTrue($item->getIsAdmin());
 
-        $this->assertEquals($data['firstName'], $item->getFirstName());
-        $this->assertEquals($data['lastName'], $item->getLastName());
-
+        $this->assertEquals($test['firstName'], $item->getFirstName());
+        $this->assertEquals($test['lastName'], $item->getLastName());
         $this->assertEquals($test['birthday'], $item->getBirthday());
         $this->assertEquals($test['createAt'], $item->getCreateAt());
         $this->assertEquals($test['updateAt'], $item->getUpdateAt());

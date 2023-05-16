@@ -18,38 +18,6 @@ class CustomerTest extends TestCase
             'isBan' => false,
         ];
 
-        $test = [
-            'birthday' => '1989-02-12',
-            'createAt' => '2021-02-23',
-            'updateAt' => '2021-02-25',
-            'status' => 'Не заблокирован',
-            'tableName' => 'customers',
-            'selectAllStr' => 'SELECT * FROM customers first_name ORDER BY DESC',
-            'selectOneStr' => 'SELECT 678 FROM customers',
-            'insertStr' => 'INSERT INTO customers VALUES id = 54, first_name = Kleopatra, last_name = Aleksandryiskay',
-            'updateStr' => 'UPDATE customers SET first_name = false WHERE id = 34',
-            'deleteStr' => 'DELETE customers WHERE id = 51',
-            'DESC' => true,
-            'firstName' => 'first_name',
-        ];
-
-        $selectOne = [
-            'id' => 678,
-        ];
-
-        $insert = [
-            'id' => '54',
-            'firstName' => 'Kleopatra',
-            'lastName' => 'Aleksandryiskay',
-        ];
-
-        $update = [
-            'id' => '34',
-            'firstName' => 'false',
-        ];
-
-        $delete = 51;
-
         $item = Customer::create($data);
 
         $this->assertInstanceOf(User::class, $item);
@@ -63,18 +31,55 @@ class CustomerTest extends TestCase
         $this->assertIsString($item->getUpdateAt());
         $this->assertIsString($item->getStatus($item));
 
+        $test = [
+            'firstName' => 'Rim',
+            'lastName' => 'Gobkin',
+            'birthday' => '1989-02-12',
+            'createAt' => '2021-02-23',
+            'updateAt' => '2021-02-25',
+            'status' => 'Не заблокирован',
+            'tableName' => 'customers',
+            'selectAllStr' => 'SELECT * FROM customers ORDER BY first_name DESC',
+            'selectOneStr' => 'SELECT * FROM customers WHERE id = 678',
+            'insertStr' => 'INSERT INTO customers(first_name, last_name, birthday) VALUES Kleopatra, Aleksandryiskay, 1234-09-10',
+            'updateStr' => 'UPDATE customers SET first_name = false WHERE id = 34',
+            'deleteStr' => 'DELETE customers WHERE id = 51 LIMIT 1',
+            'DESC' => true,
+            'first_name' => 'first_name',
+        ];
+
         $this->assertIsString($item->getAll($item, $test));
+
+        $selectOne = [
+            'id' => 678,
+        ];
+
         $this->assertIsString($item->getOne($item, $selectOne));
+
+        $insert = [
+            'firstName' => 'Kleopatra',
+            'lastName' => 'Aleksandryiskay',
+            'birthday' => '1234-09-10',
+        ];
+
         $this->assertIsString($item->insert($item, $insert));
+
+        $update = [
+            'id' => '34',
+            'firstName' => 'false',
+        ];
+
         $this->assertIsString($item->update($item, $update));
+
+        $delete = 51;
+
         $this->assertIsString($item->delete($item, $delete));
 
         $this->assertIsBool($item->getIsBan());
         $this->assertFalse($item->getIsBan());
 
-        $this->assertEquals($data['firstName'], $item->getFirstName());
-        $this->assertEquals($data['lastName'], $item->getLastName());
-
+        $this->assertEquals($test['firstName'], $item->getFirstName());
+        $this->assertEquals($test['lastName'], $item->getLastName());
         $this->assertEquals($test['birthday'], $item->getBirthday());
         $this->assertEquals($test['createAt'], $item->getCreateAt());
         $this->assertEquals($test['updateAt'], $item->getUpdateAt());

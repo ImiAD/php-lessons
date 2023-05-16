@@ -19,6 +19,9 @@ abstract class User
     {
         $this->firstName = $data['firstName'];
         $this->lastName = $data['lastName'];
+        $this->birthday = Date::format('Y-m-d', $data['birthday']);
+        $this->createAt = Date::format('Y-m-d', $data['createAt']);
+        $this->updateAt = Date::format('Y-m-d', $data['updateAt']);
         $this->isBan = $data['isBan'];
     }
 
@@ -30,63 +33,11 @@ abstract class User
             $item->setId((int)$data['id']);
         }
 
-        //Как этот код из этих 3 одинкаковых if объеденить в 1 условие/цикл?
-        if (!empty($data['birthday'])) {
-            $str = explode('-', $data['birthday']);
-            $result = $str[2] . '-' . $str[1] . '-' . $str[0];
-            $item->setBirthday($result);
-        }
-
-        if (!empty($data['createAt'])) {
-            $str = explode('-', $data['createAt']);
-            $result = $str[2] . '-' . $str[1] . '-' . $str[0];
-            $item->setCreateAt($result);
-        }
-
-        if (!empty($data['updateAt'])) {
-            $str = explode('-', $data['updateAt']);
-            $result = $str[2] . '-' . $str[1] . '-' . $str[0];
-            $item->setUpdateAt($result);
-        }
-
-
         if ((!empty($data['isAdmin'])) && $item instanceof Admin) {
             $item->setIsAdmin($data['isAdmin']);
         }
 
         return $item;
-    }
-
-    public function getAll(User $item, array $data): string
-    {
-        $orderBy = $data['DESC'] ? 'ORDER BY DESC' : 'ORDER BY ASC';
-
-        return "SELECT * FROM {$item->getTableName()} {$data['firstName']} {$orderBy}";
-    }
-
-    // Не получается прямо в строку запроса поместить тернарный оператор сравнения с null.
-    // Про тернарный прочитал, что в строку его нет возможности поместить. Только с конкатенацией, но у меня тогда
-    // метод возвращал только SELECT и больше ничего. <- при использовании конкатенации.
-    public function getOne(User $item, array $data): string
-    {
-        return "SELECT {$data['id']} FROM {$item->getTableName()}";
-    }
-
-    public function insert(User $item, array $data): string
-    {
-        return "INSERT INTO {$item->getTableName()} VALUES id = {$data['id']}, first_name = {$data['firstName']}, last_name = {$data['lastName']}";
-    }
-
-    public function update(User $item, array $data): string
-    {
-        return "UPDATE {$item->getTableName()} SET first_name = {$data['firstName']} WHERE id = {$data['id']}";
-    }
-
-    public function delete(User $item, ?int $id = null): string
-    {
-        $str = $id ? " WHERE id = {$id}" : '';
-
-        return "DELETE {$item->getTableName()}{$str}";
     }
 
     public function getTableName(): string
@@ -172,5 +123,33 @@ abstract class User
     public function getRole(Admin $item): string
     {
         return $item->getIsAdmin() ? 'Администратор' : 'Пользователь';
+    }
+
+    public function getAll(User $item, array $data): string
+    {
+        $orderBy = "ORDER BY {$data['first_name']}";
+        $orderBy .= $data['DESC'] ?  ' DESC' : ' ASC';
+
+        return "SELECT * FROM {$item->getTableName()} {$orderBy}";
+    }
+
+    public function getOne(User $item, array $data): string
+    {
+        return "SELECT * FROM {$item->getTableName()} WHERE id = {$data['id']}";
+    }
+
+    public function insert(User $item, array $data): string
+    {
+        return "INSERT INTO {$item->getTableName()}(first_name, last_name, birthday) VALUES {$data['firstName']}, {$data['lastName']}, {$data['birthday']}";
+    }
+
+    public function update(User $item, array $data): string
+    {
+        return "UPDATE {$item->getTableName()} SET first_name = {$data['firstName']} WHERE id = {$data['id']}";
+    }
+
+    public function delete(User $item, ?int $id): string
+    {
+        return "DELETE {$item->getTableName()} WHERE id = {$id} LIMIT 1";
     }
 }
