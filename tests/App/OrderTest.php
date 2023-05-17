@@ -129,7 +129,8 @@ class OrderTest extends TestCase
 
         $this->assertEquals($dataForOrder['calculate']['sumOrder'], $order->calculate());
 
-        return $order;    }
+        return $order;
+    }
 
     /**
      * @depends testDataForCreateOrder
