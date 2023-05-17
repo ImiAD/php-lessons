@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace App;
+namespace App\Users\Admin\Customer;
 
 class Admin extends User
 {

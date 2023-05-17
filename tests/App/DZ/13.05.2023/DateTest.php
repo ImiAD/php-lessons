@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App;
+namespace App\User\Admin\Customer;
 
+use App\Users\Admin\Customer\Date;
 use PHPUnit\Framework\TestCase;
 
 class DateTest extends TestCase

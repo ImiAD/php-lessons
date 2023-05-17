@@ -1,89 +1,96 @@
 <?php
 declare(strict_types=1);
 
-namespace App;
+namespace App\User\Admin\Customer;
 
+use App\Users\Admin\Customer\Admin;
+use App\Users\Admin\Customer\User;
 use PHPUnit\Framework\TestCase;
 
-class CustomerTest extends TestCase
+class AdminTest extends TestCase
 {
-    public function testCanCreateCustomerObject(): void
+    public function testCanCreateAdminObject(): void
     {
         $data = [
-            'firstName' => 'Rim',
-            'lastName' => 'Gobkin',
-            'birthday' => '12-02-1989',
-            'createAt' => '23-02-2021',
-            'updateAt' => '25-02-2021',
+            'firstName' => 'Ivan',
+            'lastName' => 'Ivanov',
+            'birthday' => '12-12-2000',
+            'createAt' => '30-01-2023',
+            'updateAt' => '02-02-2023',
             'isBan' => false,
+            'isAdmin' => true,
         ];
 
-        $item = Customer::create($data);
+        $item = Admin::create($data);
 
         $this->assertInstanceOf(User::class, $item);
-        $this->assertInstanceOf(Customer::class, $item);
+        $this->assertInstanceOf(Admin::class, $item);
 
-        $this->assertIsString($item->getTableName());
+        $this->assertNull($item->getId());
+
         $this->assertIsString($item->getFirstName());
         $this->assertIsString($item->getLastName());
         $this->assertIsString($item->getBirthday());
         $this->assertIsString($item->getCreateAt());
         $this->assertIsString($item->getUpdateAt());
-        $this->assertIsString($item->getStatus($item));
+        $this->assertIsString($item->getTableName());
 
         $test = [
-            'firstName' => 'Rim',
-            'lastName' => 'Gobkin',
-            'birthday' => '1989-02-12',
-            'createAt' => '2021-02-23',
-            'updateAt' => '2021-02-25',
+            'firstName' => 'Ivan',
+            'lastName' => 'Ivanov',
+            'birthday' => '2000-12-12',
+            'createAt' => '2023-01-30',
+            'updateAt' => '2023-02-02',
             'status' => 'Не заблокирован',
-            'tableName' => 'customers',
-            'selectAllStr' => 'SELECT * FROM customers ORDER BY first_name DESC',
-            'selectOneStr' => 'SELECT * FROM customers WHERE id = 678',
-            'insertStr' => 'INSERT INTO customers(first_name, last_name, birthday) VALUES Kleopatra, Aleksandryiskay, 1234-09-10',
-            'updateStr' => 'UPDATE customers SET first_name = false WHERE id = 34',
-            'deleteStr' => 'DELETE customers WHERE id = 51 LIMIT 1',
-            'DESC' => true,
+            'role' => 'Администратор',
+            'tableName' => 'admins',
+//            'selectAllStr' => 'SELECT * FROM admins ORDER BY first_name DESC',
+            'selectAllStr' => 'SELECT * FROM admins ORDER BY first_name ASC',
+            'selectOneStr' => 'SELECT * FROM admins WHERE id = 2',
+            'insertStr' => 'INSERT INTO admins(first_name, last_name, birthday) VALUES Mishanya, XXX, 1752-08-22',
+            'updateStr' => 'UPDATE admins SET first_name = Foma WHERE id = 12',
+            'deleteStr' => 'DELETE admins WHERE id = 22 LIMIT 1',
+//            'DESC' => true,
+            'DESC' => false,
             'first_name' => 'first_name',
         ];
 
-        $this->assertIsString($item->getAll($item, $test));
-
         $selectOne = [
-            'id' => 678,
+            'id' => '2',
         ];
 
+        $this->assertIsString($item->getAll($item, $test));
         $this->assertIsString($item->getOne($item, $selectOne));
 
         $insert = [
-            'firstName' => 'Kleopatra',
-            'lastName' => 'Aleksandryiskay',
-            'birthday' => '1234-09-10',
+            'firstName' => 'Mishanya',
+            'lastName' => 'XXX',
+            'birthday' => '1752-08-22',
         ];
 
         $this->assertIsString($item->insert($item, $insert));
 
         $update = [
-            'id' => '34',
-            'firstName' => 'false',
+            'id' => 12,
+            'firstName' => 'Foma',
         ];
 
         $this->assertIsString($item->update($item, $update));
 
-        $delete = 51;
+        $delete = 22;
 
         $this->assertIsString($item->delete($item, $delete));
 
         $this->assertIsBool($item->getIsBan());
         $this->assertFalse($item->getIsBan());
+        $this->assertIsBool($item->getIsAdmin());
+        $this->assertTrue($item->getIsAdmin());
 
         $this->assertEquals($test['firstName'], $item->getFirstName());
         $this->assertEquals($test['lastName'], $item->getLastName());
         $this->assertEquals($test['birthday'], $item->getBirthday());
         $this->assertEquals($test['createAt'], $item->getCreateAt());
         $this->assertEquals($test['updateAt'], $item->getUpdateAt());
-        $this->assertEquals($test['status'], $item->getStatus($item));
         $this->assertEquals($test['tableName'], $item->getTableName());
         $this->assertEquals($test['selectAllStr'], $item->getAll($item, $test));
         $this->assertEquals($test['selectOneStr'], $item->getOne($item, $selectOne));
@@ -92,14 +99,14 @@ class CustomerTest extends TestCase
         $this->assertEquals($test['deleteStr'], $item->delete($item, $delete));
 
         $dataTest = [
-            'id' => 12,
-            'firstName' => 'Michail',
-            'lastName' => 'Shumakher',
-            'birthday' => '12-04-1966',
-            'createAt' => '28-01-2021',
-            'updateAt' => '12-03-2022',
+            'id' => 5,
+            'firstName' => 'Max',
+            'lastName' => 'Maximenko',
+            'birthday' => '1999-01-25',
+            'createAt' => '1900-02-10',
+            'updateAt' => '1999-02-03',
             'isBan' => true,
-            'status' => 'Заблокирован',
+            'isAdmin' => false,
         ];
 
         $item->setId($dataTest['id']);
@@ -109,6 +116,7 @@ class CustomerTest extends TestCase
         $item->setCreateAt($dataTest['createAt']);
         $item->setUpdateAt($dataTest['updateAt']);
         $item->setIsBan($dataTest['isBan']);
+        $item->setIsAdmin($dataTest['isAdmin']);
 
         $this->assertIsInt($item->getId());
 
@@ -119,7 +127,9 @@ class CustomerTest extends TestCase
         $this->assertIsString($item->getUpdateAt());
 
         $this->assertIsBool($item->getIsBan());
+        $this->assertIsBool($item->getIsAdmin());
         $this->assertTrue($item->getIsBan());
+        $this->assertFalse($item->getIsAdmin());
 
         $this->assertEquals($dataTest['id'], $item->getId());
         $this->assertEquals($dataTest['firstName'], $item->getFirstName());
@@ -127,14 +137,18 @@ class CustomerTest extends TestCase
         $this->assertEquals($dataTest['birthday'], $item->getBirthday());
         $this->assertEquals($dataTest['createAt'], $item->getCreateAt());
         $this->assertEquals($dataTest['updateAt'], $item->getUpdateAt());
-        $this->assertEquals($dataTest['status'], $item->getStatus($item));
 
-        $data['id'] = '34';
+        $data['id'] = '2';
 
-        $item = Customer::create($data);
+        $item = Admin::create($data);
 
         $this->assertIsInt($item->getId());
 
+        $this->assertIsString($item->getStatus($item));
+        $this->assertIsString($item->getRole($item)); // Почему он выделяет передаваемый объект?
+
         $this->assertEquals($data['id'], $item->getId());
+        $this->assertEquals($test['status'], $item->getStatus($item));
+        $this->assertEquals($test['role'], $item->getRole($item)); // Почему он выделяет передаваемый объект?
     }
 }

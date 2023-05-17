@@ -1,8 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App;
+namespace App\User\Admin\Customer;
 
+use App\Users\Admin\Customer\Admin;
+use App\Users\Admin\Customer\Customer;
+use App\Users\Admin\Customer\UserWriter;
 use PHPUnit\Framework\TestCase;
 
 class UserWriterTest extends TestCase
