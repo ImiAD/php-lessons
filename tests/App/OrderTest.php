@@ -42,6 +42,14 @@ class OrderTest extends TestCase
         $dataForOrder->sumDiscount = $sumDiscount;
         $dataForOrder->calculate = $calculate;
 
+        $this->assertIsObject($dataForOrder);
+        $this->assertInstanceOf(\StdClass::class, $dataForOrder);
+
+        $this->assertEquals($Car, $dataForOrder->Car);
+        $this->assertEquals($Pan, $dataForOrder->Pan);
+        $this->assertEquals($sumDiscount, $dataForOrder->sumDiscount);
+        $this->assertEquals($calculate, $dataForOrder->calculate);
+
         return $dataForOrder;
     }
 
@@ -53,6 +61,7 @@ class OrderTest extends TestCase
     {
         $orderCar = new OrderItems($dataForOrder->Car);
 
+        $this->assertIsObject($orderCar);
         $this->assertInstanceof(OrderItems::class, $orderCar);
 
         $this->assertIsString($orderCar->getTitle());
@@ -73,6 +82,7 @@ class OrderTest extends TestCase
 
         $orderPan = new OrderItems($dataForOrder->Pan);
 
+        $this->assertIsObject($orderPan);
         $this->assertInstanceOf(OrderItems::class, $orderPan);
 
         $this->assertIsString($orderPan->getTitle());
@@ -106,6 +116,7 @@ class OrderTest extends TestCase
     {
         $discount = new Discount();
 
+        $this->assertIsObject($discount);
         $this->assertInstanceOf(Discount::class, $discount);
 
         $this->assertEquals($dataForOrder->sumDiscount['car'], $discount->getSum($orderItems['Car']));
@@ -120,6 +131,7 @@ class OrderTest extends TestCase
     {
         $order = new Order();
 
+        $this->assertIsObject($order);
         $this->assertInstanceOf(Order::class, $order);
 
         $order->add($orderItems['Car']);
@@ -141,6 +153,7 @@ class OrderTest extends TestCase
     {
         $calculate = new Calculate();
 
+        $this->assertIsObject($calculate);
         $this->assertInstanceOf(Calculate::class, $calculate);
 
         $this->assertIsFloat($calculate->makeSum($order));
