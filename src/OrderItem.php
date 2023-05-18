@@ -3,13 +3,12 @@ declare(strict_types=1);
 
 namespace App;
 
-class OrderItems
+class OrderItem
 {
     private string $title;
     private float $price;
     private int $quantity;
     private int $discount;
-    private float $sumDiscount;
 
     public function __construct(array $data)
     {
@@ -17,10 +16,6 @@ class OrderItems
         $this->price = floatval($data['price']);
         $this->quantity = intval($data['quantity']);
         $this->discount = intval($data['discount']);
-
-        if ($this->hasDiscount()) {
-            $this->sumDiscount = (new Discount())->getSum($this);
-        }
     }
 
     public function getTitle(): string
@@ -43,17 +38,8 @@ class OrderItems
         return $this->discount;
     }
 
-    public function getSumDiscount(): float
-    {
-        return $this->sumDiscount;
-    }
-
     public function hasDiscount(): bool
     {
-        if ($this->getDiscount()) {
-            return true;
-        }
-
-        return false;
+        return !empty($this->getDiscount());
     }
 }

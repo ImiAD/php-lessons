@@ -9,14 +9,14 @@ class OrderTest extends TestCase
 {
     public function testDataForCreateOrder(): \StdClass
     {
-        $Car = [
+        $car = [
             'title' => 'Car',
             'price' => '10',
             'quantity' => '2',
             'discount' => '10',
         ];
 
-        $Pan = [
+        $pan = [
             'title' => 'Pan',
             'price' => '1',
             'quantity' => '5',
@@ -27,28 +27,33 @@ class OrderTest extends TestCase
             'car' => 2.0,
         ];
 
-        $calculate = [
+        $sumOrder = [
             'sumOrder' => 23,
         ];
 
-        $this->assertIsArray($Car);
-        $this->assertIsArray($Pan);
+        $discount = new Discount();
+
+        $this->assertIsArray($car);
+        $this->assertIsArray($pan);
         $this->assertIsArray($sumDiscount);
-        $this->assertIsArray($calculate);
+        $this->assertIsArray($sumOrder);
+        $this->assertIsObject($discount);
+        $this->assertInstanceOf(Discount::class, $discount);
 
         $dataForOrder = new \StdClass();
-        $dataForOrder->Car = $Car;
-        $dataForOrder->Pan = $Pan;
+        $dataForOrder->car = $car;
+        $dataForOrder->pan = $pan;
         $dataForOrder->sumDiscount = $sumDiscount;
-        $dataForOrder->calculate = $calculate;
+        $dataForOrder->sumOrder = $sumOrder;
+        $dataForOrder->discount = $discount;
 
         $this->assertIsObject($dataForOrder);
         $this->assertInstanceOf(\StdClass::class, $dataForOrder);
 
-        $this->assertEquals($Car, $dataForOrder->Car);
-        $this->assertEquals($Pan, $dataForOrder->Pan);
+        $this->assertEquals($car, $dataForOrder->car);
+        $this->assertEquals($pan, $dataForOrder->pan);
         $this->assertEquals($sumDiscount, $dataForOrder->sumDiscount);
-        $this->assertEquals($calculate, $dataForOrder->calculate);
+        $this->assertEquals($sumOrder, $dataForOrder->sumOrder);
 
         return $dataForOrder;
     }
@@ -57,12 +62,12 @@ class OrderTest extends TestCase
      * @depends testDataForCreateOrder
      * @return array
      */
-    public function testCanCreateOrderItemsObject(\StdClass $dataForOrder): array
+    public function testCanCreateOrderItemObject(\StdClass $dataForOrder): array
     {
-        $orderCar = new OrderItems($dataForOrder->Car);
+        $orderCar = new OrderItem($dataForOrder->car);
 
         $this->assertIsObject($orderCar);
-        $this->assertInstanceof(OrderItems::class, $orderCar);
+        $this->assertInstanceof(OrderItem::class, $orderCar);
 
         $this->assertIsString($orderCar->getTitle());
         $this->assertIsFloat($orderCar->getPrice());
@@ -71,19 +76,15 @@ class OrderTest extends TestCase
         $this->assertIsBool($orderCar->hasDiscount());
         $this->assertTrue($orderCar->hasDiscount());
 
-        $this->assertEquals($dataForOrder->Car['title'], $orderCar->getTitle());
-        $this->assertEquals($dataForOrder->Car['price'], $orderCar->getPrice());
-        $this->assertEquals($dataForOrder->Car['quantity'], $orderCar->getQuantity());
-        $this->assertEquals($dataForOrder->Car['discount'], $orderCar->getDiscount());
+        $this->assertEquals($dataForOrder->car['title'], $orderCar->getTitle());
+        $this->assertEquals($dataForOrder->car['price'], $orderCar->getPrice());
+        $this->assertEquals($dataForOrder->car['quantity'], $orderCar->getQuantity());
+        $this->assertEquals($dataForOrder->car['discount'], $orderCar->getDiscount());
 
-        if ($dataForOrder->Car['discount']) {
-            $this->assertEquals($dataForOrder->sumDiscount['car'], $orderCar->getSumDiscount());
-        }
-
-        $orderPan = new OrderItems($dataForOrder->Pan);
+        $orderPan = new OrderItem($dataForOrder->pan);
 
         $this->assertIsObject($orderPan);
-        $this->assertInstanceOf(OrderItems::class, $orderPan);
+        $this->assertInstanceOf(OrderItem::class, $orderPan);
 
         $this->assertIsString($orderPan->getTitle());
         $this->assertIsFloat($orderPan->getPrice());
@@ -92,16 +93,12 @@ class OrderTest extends TestCase
         $this->assertIsBool($orderPan->hasDiscount());
         $this->assertFalse($orderPan->hasDiscount());
 
-        $this->assertEquals($dataForOrder->Pan['title'], $orderPan->getTitle());
-        $this->assertEquals($dataForOrder->Pan['price'], $orderPan->getPrice());
-        $this->assertEquals($dataForOrder->Pan['quantity'], $orderPan->getQuantity());
-        $this->assertEquals($dataForOrder->Pan['discount'], $orderPan->getDiscount());
+        $this->assertEquals($dataForOrder->pan['title'], $orderPan->getTitle());
+        $this->assertEquals($dataForOrder->pan['price'], $orderPan->getPrice());
+        $this->assertEquals($dataForOrder->pan['quantity'], $orderPan->getQuantity());
+        $this->assertEquals($dataForOrder->pan['discount'], $orderPan->getDiscount());
 
-        if ($dataForOrder->Pan['discount']) {
-            $this->assertEquals($dataForOrder->sumDiscount['pan'], $orderCar->getSumDiscount());
-        }
-
-        return $orderItems = [
+        return $orderItem = [
             'Car' => $orderCar,
             'Pan' => $orderPan,
         ];
@@ -109,54 +106,36 @@ class OrderTest extends TestCase
 
     /**
      * @depends testDataForCreateOrder
-     * @depends testCanCreateOrderItemsObject
+     * @depends testCanCreateOrderItemObject
      * @return void
      */
-    public function testCanCreateDiscountObject(\StdClass $dataForOrder, array $orderItems): void
+    public function testCanCreateDiscountObject(\StdClass $dataForOrder, array $orderItem): void
     {
-        $discount = new Discount();
+        $this->assertIsObject($dataForOrder->discount);
+        $this->assertInstanceOf(Discount::class, $dataForOrder->discount);
 
-        $this->assertIsObject($discount);
-        $this->assertInstanceOf(Discount::class, $discount);
-
-        $this->assertEquals($dataForOrder->sumDiscount['car'], $discount->getSum($orderItems['Car']));
+        $this->assertEquals($dataForOrder->sumDiscount['car'], $dataForOrder->discount->get($orderItem['Car']));
     }
 
     /**
      * @depends testDataForCreateOrder
-     * @depends testCanCreateOrderItemsObject
+     * @depends testCanCreateOrderItemObject
      * @return void
      */
-    public function testCanCreateOrderObject(\StdClass $dataForOrder, array $orderItems): Order
+    public function testCanCreateOrderObject(\StdClass $dataForOrder, array $orderItem): Order
     {
-        $order = new Order();
+        $order = new Order($dataForOrder->discount);
 
         $this->assertIsObject($order);
         $this->assertInstanceOf(Order::class, $order);
 
-        $order->add($orderItems['Car']);
-        $order->add($orderItems['Pan']);
+        $order->add($orderItem['Car']);
+        $order->add($orderItem['Pan']);
 
         $this->assertIsFloat($order->calculate());
 
-        $this->assertEquals($dataForOrder->calculate['sumOrder'], $order->calculate());
+        $this->assertEquals($dataForOrder->sumOrder['sumOrder'], $order->calculate());
 
         return $order;
-    }
-
-    /**
-     * @depends testDataForCreateOrder
-     * @depends testCanCreateOrderObject
-     * @return void
-     */
-    public function testCanCreateCalculate(\StdClass $dataForOrder, Order $order): void
-    {
-        $calculate = new Calculate();
-
-        $this->assertIsObject($calculate);
-        $this->assertInstanceOf(Calculate::class, $calculate);
-
-        $this->assertIsFloat($calculate->makeSum($order));
-        $this->assertEquals($dataForOrder->calculate['sumOrder'], $calculate->makeSum($order));
     }
 }
