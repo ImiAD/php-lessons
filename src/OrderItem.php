@@ -8,14 +8,14 @@ class OrderItem
     private string $title;
     private float $price;
     private int $quantity;
-    private int $discount;
+    private float $discount;
 
     public function __construct(array $data)
     {
         $this->title = $data['title'];
         $this->price = floatval($data['price']);
         $this->quantity = intval($data['quantity']);
-        $this->discount = intval($data['discount']);
+        $this->discount = floatval($data['discount']);
     }
 
     public function getTitle(): string
@@ -33,7 +33,7 @@ class OrderItem
         return $this->quantity;
     }
 
-    public function getDiscount(): int
+    public function getDiscount(): float
     {
         return $this->discount;
     }
@@ -41,5 +41,26 @@ class OrderItem
     public function hasDiscount(): bool
     {
         return !empty($this->getDiscount());
+    }
+
+    public function getFullPriceWithoutDiscount(): float
+    {
+        return $this->getPrice() * $this->getQuantity();
+    }
+
+    public function calculate(Order $item): float
+    {
+        $result = 0;
+        match (true) {
+            !empty($item->getDiscountOrder()) =>
+                $result += $this->getFullPriceWithoutDiscount() - $this->getFullPriceWithoutDiscount() * $item->getDiscountOrder() / 100,
+            !empty($this->hasDiscount()) =>
+                $result += $item->getDiscount()->apply($this),
+            default =>
+                $result += $this->getFullPriceWithoutDiscount(),
+        };
+
+
+        return $result;
     }
 }

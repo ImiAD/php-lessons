@@ -5,22 +5,29 @@ namespace App;
 
 class Order
 {
-    private array $items = [];
     private Discount $discount;
+    private array $items = [];
+    private float $discountOrder;
 
-    public function __construct(Discount $discount)
+    public function __construct(Discount $discount, float $discountOrder)
     {
         $this->discount = $discount;
+        $this->discountOrder = $discountOrder;
     }
 
-    public function getItems(): array
+    public function getDiscount():Discount
+    {
+        return $this->discount;
+    }
+
+    public function getItem(): array
     {
         return $this->items;
     }
 
-    public function getDiscount(): Discount
+    public function getDiscountOrder(): float
     {
-        return $this->discount;
+        return $this->discountOrder;
     }
 
     public function add(OrderItem $item): void
@@ -31,12 +38,8 @@ class Order
     public function calculate(): float
     {
         $result = 0;
-        foreach ($this->getItems() as $item) {
-            if ($item->hasDiscount()) {
-                $result += $this->discount->apply($item);
-            } else {
-                $result += $item->getPrice() * $item->getQuantity();
-            }
+        foreach ($this->getItem() as $item) {
+           $result += $item->calculate($this);
         }
 
         return $result;

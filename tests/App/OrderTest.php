@@ -7,135 +7,130 @@ use PHPUnit\Framework\TestCase;
 
 class OrderTest extends TestCase
 {
-    public function testDataForCreateOrder(): \StdClass
+    public function testCanCreateOrder(): void
     {
-        $car = [
-            'title' => 'Car',
-            'price' => '10',
-            'quantity' => '2',
-            'discount' => '10',
+        $dataForCreateOrderItemObjectVolga = [
+            'title' => 'Volga',
+            'price' => '100',
+            'quantity' => '3',
+            'discount' => '20',
         ];
 
-        $pan = [
-            'title' => 'Pan',
-            'price' => '1',
-            'quantity' => '5',
+        $this->assertIsArray($dataForCreateOrderItemObjectVolga);
+
+        $dataTestArrayCount = [
+            'countVolga' => 4,
+            'countNiva' => 4,
+        ];
+
+        $this->assertCount( $dataTestArrayCount['countVolga'],$dataForCreateOrderItemObjectVolga);
+
+        $dataForCreateOrderItemObjectNiva = [
+            'title' => 'Niva',
+            'price' => '50',
+            'quantity' => '2',
             'discount' => '0',
         ];
 
-        $sumDiscount = [
-            'car' => 2.0,
+        $dataTestDiscountOrderItemObject =[
+            'fullPriceWithoutDiscountVolga' => '300',
+            'fullPriceWithoutDiscountNiva' => '100',
         ];
 
-        $sumOrder = [
-            'sumOrder' => 23,
+        $this->assertIsArray($dataForCreateOrderItemObjectNiva);
+        $this->assertCount($dataTestArrayCount['countNiva'], $dataForCreateOrderItemObjectNiva);
+
+        $orderItemVolga = new OrderItem($dataForCreateOrderItemObjectVolga);
+
+        $this->assertIsObject($orderItemVolga);
+        $this->assertInstanceOf(OrderItem::class, $orderItemVolga);
+        $this->assertIsString($orderItemVolga->getTitle());
+        $this->assertIsFloat($orderItemVolga->getPrice());
+        $this->assertIsInt($orderItemVolga->getQuantity());
+        $this->assertIsFloat($orderItemVolga->getDiscount());
+        $this->assertIsBool($orderItemVolga->hasDiscount());
+        $this->assertTrue($orderItemVolga->hasDiscount());
+        $this->assertIsFloat($orderItemVolga->getFullPriceWithoutDiscount());
+
+        $this->assertEquals($dataForCreateOrderItemObjectVolga['title'], $orderItemVolga->getTitle());
+        $this->assertEquals($dataForCreateOrderItemObjectVolga['price'], $orderItemVolga->getPrice());
+        $this->assertEquals($dataForCreateOrderItemObjectVolga['quantity'], $orderItemVolga->getQuantity());
+        $this->assertEquals($dataForCreateOrderItemObjectVolga['discount'], $orderItemVolga->getDiscount());
+        $this->assertEquals($dataTestDiscountOrderItemObject['fullPriceWithoutDiscountVolga'], $orderItemVolga->getFullPriceWithoutDiscount());
+
+        $orderItemNiva = new OrderItem($dataForCreateOrderItemObjectNiva);
+
+        $this->assertIsObject($orderItemNiva);
+        $this->assertInstanceOf(OrderItem::class, $orderItemNiva);
+        $this->assertIsString($orderItemNiva->getTitle());
+        $this->assertIsFloat($orderItemNiva->getPrice());
+        $this->assertIsInt($orderItemNiva->getQuantity());
+        $this->assertIsFloat($orderItemNiva->getDiscount());
+        $this->assertIsBool($orderItemNiva->hasDiscount());
+        $this->assertFalse($orderItemNiva->hasDiscount());
+        $this->assertIsFloat($orderItemNiva->getFullPriceWithoutDiscount());
+
+        $this->assertEquals($dataForCreateOrderItemObjectNiva['title'], $orderItemNiva->getTitle());
+        $this->assertEquals($dataForCreateOrderItemObjectNiva['price'], $orderItemNiva->getPrice());
+        $this->assertEquals($dataForCreateOrderItemObjectNiva['quantity'], $orderItemNiva->getQuantity());
+        $this->assertEquals($dataForCreateOrderItemObjectNiva['discount'], $orderItemNiva->getDiscount());
+        $this->assertEquals($dataTestDiscountOrderItemObject['fullPriceWithoutDiscountNiva'], $orderItemNiva->getFullPriceWithoutDiscount());
+
+        $dataTestDiscountObject = [
+            'appleVolga' => '240',
+            'getVolga' => '60',
+            'appleNiva' => '100',
+            'getNiva' => '0',
         ];
 
-        $discount = new Discount();
+        $discountVolga = new Discount();
 
-        $this->assertIsArray($car);
-        $this->assertIsArray($pan);
-        $this->assertIsArray($sumDiscount);
-        $this->assertIsArray($sumOrder);
-        $this->assertIsObject($discount);
-        $this->assertInstanceOf(Discount::class, $discount);
+        $this->assertIsObject($discountVolga);
+        $this->assertInstanceOf(Discount::class, $discountVolga);
 
-        $dataForOrder = new \StdClass();
-        $dataForOrder->car = $car;
-        $dataForOrder->pan = $pan;
-        $dataForOrder->sumDiscount = $sumDiscount;
-        $dataForOrder->sumOrder = $sumOrder;
-        $dataForOrder->discount = $discount;
+        $this->assertIsFloat($discountVolga->apply($orderItemVolga));
+        $this->assertIsFloat($discountVolga->get($orderItemVolga));
 
-        $this->assertIsObject($dataForOrder);
-        $this->assertInstanceOf(\StdClass::class, $dataForOrder);
+        $this->assertEquals($dataTestDiscountObject['appleVolga'], $discountVolga->apply($orderItemVolga));
+        $this->assertEquals($dataTestDiscountObject['getVolga'], $discountVolga->get($orderItemVolga));
 
-        $this->assertEquals($car, $dataForOrder->car);
-        $this->assertEquals($pan, $dataForOrder->pan);
-        $this->assertEquals($sumDiscount, $dataForOrder->sumDiscount);
-        $this->assertEquals($sumOrder, $dataForOrder->sumOrder);
+        $discountNiva = new Discount();
 
-        return $dataForOrder;
-    }
+        $this->assertIsObject($discountNiva);
+        $this->assertInstanceOf(Discount::class, $discountNiva);
 
-    /**
-     * @depends testDataForCreateOrder
-     * @return array
-     */
-    public function testCanCreateOrderItemObject(\StdClass $dataForOrder): array
-    {
-        $orderCar = new OrderItem($dataForOrder->car);
+        $this->assertIsFloat($discountNiva->apply($orderItemNiva));
+        $this->assertIsFloat($discountNiva->get($orderItemNiva));
 
-        $this->assertIsObject($orderCar);
-        $this->assertInstanceof(OrderItem::class, $orderCar);
+        $this->assertEquals($dataTestDiscountObject['appleNiva'], $discountNiva->apply($orderItemNiva));
+        $this->assertEquals($dataTestDiscountObject['getNiva'], $discountNiva->get($orderItemNiva));
 
-        $this->assertIsString($orderCar->getTitle());
-        $this->assertIsFloat($orderCar->getPrice());
-        $this->assertIsInt($orderCar->getQuantity());
-        $this->assertIsInt($orderCar->getDiscount());
-        $this->assertIsBool($orderCar->hasDiscount());
-        $this->assertTrue($orderCar->hasDiscount());
-
-        $this->assertEquals($dataForOrder->car['title'], $orderCar->getTitle());
-        $this->assertEquals($dataForOrder->car['price'], $orderCar->getPrice());
-        $this->assertEquals($dataForOrder->car['quantity'], $orderCar->getQuantity());
-        $this->assertEquals($dataForOrder->car['discount'], $orderCar->getDiscount());
-
-        $orderPan = new OrderItem($dataForOrder->pan);
-
-        $this->assertIsObject($orderPan);
-        $this->assertInstanceOf(OrderItem::class, $orderPan);
-
-        $this->assertIsString($orderPan->getTitle());
-        $this->assertIsFloat($orderPan->getPrice());
-        $this->assertIsInt($orderPan->getQuantity());
-        $this->assertIsInt($orderPan->getDiscount());
-        $this->assertIsBool($orderPan->hasDiscount());
-        $this->assertFalse($orderPan->hasDiscount());
-
-        $this->assertEquals($dataForOrder->pan['title'], $orderPan->getTitle());
-        $this->assertEquals($dataForOrder->pan['price'], $orderPan->getPrice());
-        $this->assertEquals($dataForOrder->pan['quantity'], $orderPan->getQuantity());
-        $this->assertEquals($dataForOrder->pan['discount'], $orderPan->getDiscount());
-
-        return $orderItem = [
-            'Car' => $orderCar,
-            'Pan' => $orderPan,
+        $dataCreateOrderObject = [
+            'discountObjectClass' => new Discount(),
+            'discountOrder' => 10,
+//            'discountOrder' => 0,
         ];
-    }
 
-    /**
-     * @depends testDataForCreateOrder
-     * @depends testCanCreateOrderItemObject
-     * @return void
-     */
-    public function testCanCreateDiscountObject(\StdClass $dataForOrder, array $orderItem): void
-    {
-        $this->assertIsObject($dataForOrder->discount);
-        $this->assertInstanceOf(Discount::class, $dataForOrder->discount);
-
-        $this->assertEquals($dataForOrder->sumDiscount['car'], $dataForOrder->discount->get($orderItem['Car']));
-    }
-
-    /**
-     * @depends testDataForCreateOrder
-     * @depends testCanCreateOrderItemObject
-     * @return void
-     */
-    public function testCanCreateOrderObject(\StdClass $dataForOrder, array $orderItem): Order
-    {
-        $order = new Order($dataForOrder->discount);
+        $order = new Order($dataCreateOrderObject['discountObjectClass'], $dataCreateOrderObject['discountOrder']);
 
         $this->assertIsObject($order);
         $this->assertInstanceOf(Order::class, $order);
 
-        $order->add($orderItem['Car']);
-        $order->add($orderItem['Pan']);
+        $order->add($orderItemVolga);
+        $order->add($orderItemNiva);
 
-        $this->assertIsFloat($order->calculate());
+        $dataTestOrderObject = [
+            'getItems' => [
+                $orderItemVolga,
+                $orderItemNiva,
+            ],
+            'getDiscount' => new Discount(),
+            'calculate' => '360', // если ЕСТЬ скидка на ВЕСЬ заказ
+//            'calculate' => '340', // если сидка на отдельные товары
+        ];
 
-        $this->assertEquals($dataForOrder->sumOrder['sumOrder'], $order->calculate());
-
-        return $order;
+        $this->assertEquals($dataTestOrderObject['getItems'], $order->getItem());
+        $this->assertEquals($dataTestOrderObject['getDiscount'], $order->getDiscount());
+        $this->assertEquals($dataTestOrderObject['calculate'], $order->calculate());
     }
 }
