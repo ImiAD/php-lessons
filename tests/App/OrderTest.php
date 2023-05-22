@@ -50,13 +50,13 @@ class OrderTest extends TestCase
         $this->assertIsFloat($orderItemVolga->getDiscount());
         $this->assertIsBool($orderItemVolga->hasDiscount());
         $this->assertTrue($orderItemVolga->hasDiscount());
-        $this->assertIsFloat($orderItemVolga->getFullPriceWithoutDiscount());
+        $this->assertIsFloat($orderItemVolga->getFullPrice());
 
         $this->assertEquals($dataForCreateOrderItemObjectVolga['title'], $orderItemVolga->getTitle());
         $this->assertEquals($dataForCreateOrderItemObjectVolga['price'], $orderItemVolga->getPrice());
         $this->assertEquals($dataForCreateOrderItemObjectVolga['quantity'], $orderItemVolga->getQuantity());
         $this->assertEquals($dataForCreateOrderItemObjectVolga['discount'], $orderItemVolga->getDiscount());
-        $this->assertEquals($dataTestDiscountOrderItemObject['fullPriceWithoutDiscountVolga'], $orderItemVolga->getFullPriceWithoutDiscount());
+        $this->assertEquals($dataTestDiscountOrderItemObject['fullPriceWithoutDiscountVolga'], $orderItemVolga->getFullPrice());
 
         $orderItemNiva = new OrderItem($dataForCreateOrderItemObjectNiva);
 
@@ -68,13 +68,13 @@ class OrderTest extends TestCase
         $this->assertIsFloat($orderItemNiva->getDiscount());
         $this->assertIsBool($orderItemNiva->hasDiscount());
         $this->assertFalse($orderItemNiva->hasDiscount());
-        $this->assertIsFloat($orderItemNiva->getFullPriceWithoutDiscount());
+        $this->assertIsFloat($orderItemNiva->getFullPrice());
 
         $this->assertEquals($dataForCreateOrderItemObjectNiva['title'], $orderItemNiva->getTitle());
         $this->assertEquals($dataForCreateOrderItemObjectNiva['price'], $orderItemNiva->getPrice());
         $this->assertEquals($dataForCreateOrderItemObjectNiva['quantity'], $orderItemNiva->getQuantity());
         $this->assertEquals($dataForCreateOrderItemObjectNiva['discount'], $orderItemNiva->getDiscount());
-        $this->assertEquals($dataTestDiscountOrderItemObject['fullPriceWithoutDiscountNiva'], $orderItemNiva->getFullPriceWithoutDiscount());
+        $this->assertEquals($dataTestDiscountOrderItemObject['fullPriceWithoutDiscountNiva'], $orderItemNiva->getFullPrice());
 
         $dataTestDiscountObject = [
             'appleVolga' => '240',

@@ -43,24 +43,17 @@ class OrderItem
         return !empty($this->getDiscount());
     }
 
-    public function getFullPriceWithoutDiscount(): float
+    public function getFullPrice(): float
     {
         return $this->getPrice() * $this->getQuantity();
     }
 
     public function calculate(Order $item): float
     {
-        $result = 0;
-        match (true) {
-            !empty($item->getDiscountOrder()) =>
-                $result += $this->getFullPriceWithoutDiscount() - $this->getFullPriceWithoutDiscount() * $item->getDiscountOrder() / 100,
-            !empty($this->hasDiscount()) =>
-                $result += $item->getDiscount()->apply($this),
-            default =>
-                $result += $this->getFullPriceWithoutDiscount(),
+        return match (true) {
+            !empty($item->getDiscountOrder()) => $this->getFullPrice() - ($this->getFullPrice() * $item->getDiscountOrder() / 100),
+            !empty($this->hasDiscount()) => $item->getDiscount()->apply($this),
+            default => $this->getFullPrice(),
         };
-
-
-        return $result;
     }
 }

@@ -7,11 +7,11 @@ class Discount
 {
     public function apply(OrderItem $item): float
     {
-        return ($item->getFullPriceWithoutDiscount() - $this->get($item));
+        return ($item->getFullPrice() - $this->get($item));
     }
 
     public function get(OrderItem $item): float
     {
-        return ($item->getFullPriceWithoutDiscount() * $item->getDiscount() / 100);
+        return ($item->getFullPrice() * $item->getDiscount() / 100);
     }
 }
